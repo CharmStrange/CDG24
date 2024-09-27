@@ -1,11 +1,12 @@
 import os 
 # os.getrandom~
 # os.urandom ~
-# os.GRND_NONBLOCK
-# os.GRND_RANDOM
+# os.GRND_NONBLOCK ~
+# os.GRND_RANDOM ~
 
 import time
 import random
+import string
 
 # Guide
 def ContentsList():
@@ -78,4 +79,69 @@ def ContentsList():
         print("Making")
         print("Activity")
 
-ContentsList()
+# Make alphabets
+def mixed_case_mapping(times=5):
+    alphabet = string.ascii_letters  # azAZ
+    mapping = {}
+    for i in range(times):
+        rand_num = os.urandom(1)[0] % len(alphabet)
+        mapping[alphabet[rand_num]] = rand_num
+    return mapping
+
+class Lifestyle:
+    def __init__(self):
+        self.ret = []
+        print("Type category parameter, default is 'Meal'.")
+        print("Category list : ['Meal', 'Snack', 'Dessert']")
+
+    def __del__(self):
+        pass
+
+    def Food(self, category):
+        if category == 'Meal':
+            rand_num1 = os.urandom(1)[0] % (os.urandom(1)[0]) % 11
+            rand_num2 = os.urandom(1)[0] % (os.urandom(1)[0]) % 11
+
+            tmp_list1 = [dicts for dicts in mixed_case_mapping(rand_num1)]
+            tmp_list2 = [dicts for dicts in mixed_case_mapping(rand_num2)]
+
+            #print(tmp_list1); print(''.join(tmp_list1)); print((''.join(tmp_list1), rand_num1))
+            #print(tmp_list2); print(''.join(tmp_list2)); print((''.join(tmp_list2), rand_num2))
+            print("| Name | Type | Taste | Quality |")
+            print((''.join(tmp_list1), ''.join(tmp_list2), rand_num1, rand_num2))
+            return (''.join(tmp_list1), ''.join(tmp_list2), rand_num1, rand_num2)
+        
+        elif self.category == 'Snack':
+            pass
+        elif self.category == 'Dessert':
+            pass
+
+class Education:
+    pass
+
+class Business:
+    pass
+
+class ST: # Science & Technology
+    pass
+
+class HW: # Health & Wellness
+    pass
+
+class Entertainment:
+    pass
+
+class SP: # Society & Politics
+    pass
+
+class Environment:
+    pass
+
+class FB: # Fashion & Beauty
+    pass
+
+class Hobby:
+    pass
+
+t = Lifestyle()
+t.Food('Meal')
