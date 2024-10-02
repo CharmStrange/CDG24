@@ -1,9 +1,5 @@
 import os 
-# os.getrandom~
-# os.urandom ~
-# os.GRND_NONBLOCK ~
-# os.GRND_RANDOM ~
-
+import sys
 import time
 import random
 import string
@@ -88,20 +84,34 @@ def mixed_case_mapping(times=5):
         mapping[alphabet[rand_num]] = rand_num
     return mapping
 
-def transform_bytes_to_structured_data(byte_data):
-    # 1. Type: 첫 번째 바이트를 65~90 사이 값(A~Z)로 변환
-    type_char = chr(65 + (byte_data[0] % 26))
+def transform_bytes_to_structured_data(byte_data, default=0):
+    if default == 0:
+        # 1. Type: 첫 번째 바이트를 65~90 사이 값(A~Z)로 변환
+        type_char = chr(65 + (byte_data[0] % 26))
     
-    # 2. Region: 2~3번째 바이트를 합쳐서 지역 번호로 사용 (0~65535 범위)
-    region = byte_data[1] * 256 + byte_data[2]
+        # 2. Region: 2~3번째 바이트를 합쳐서 지역 번호로 사용 (0~65535 범위)
+        region = byte_data[1] * 256 + byte_data[2]
     
-    # 3. Sum: 나머지 바이트들의 합을 구해서 정수 값으로 표현
-    byte_sum = sum(byte_data[3:])
+        # 3. Sum: 나머지 바이트들의 합을 구해서 정수 값으로 표현
+        byte_sum = sum(byte_data[3:])
     
-    # 4. Qs: 특정 바이트 값이 특정 조건을 만족하면 (예: 128 이상) 'High'로 분류, 그렇지 않으면 'Low'
-    qs_value = "High" if byte_data[3] > 128 else "Low"
+        # 4. Qs: 특정 바이트 값이 특정 조건을 만족하면 (예: 128 이상) 'High'로 분류, 그렇지 않으면 'Low'
+        qs_value = "High" if byte_data[3] > 128 else "Low"
     
-    return f"| {type_char} | {region} | {byte_sum} | {qs_value} |"
+        return f"| {type_char} | {region} | {byte_sum} | {qs_value} |"
+    elif default == 1:
+        type_char1 = chr(65 + (byte_data[0] % 26))
+        type_char2 = chr(65 + (byte_data[0] % 26))
+        
+        number = byte_data[1] * byte_data[2]
+        return (type_char1, type_char2, number)
+
+    else: 
+        pass
+
+def CustomGenerator(size=10):
+    tmp = [random.randbytes(size) for _ in range(size)]
+    return [transform_bytes_to_structured_data(tmp, 1) for _ in range(size)]
 
 
 class Lifestyle:
@@ -113,7 +123,7 @@ class Lifestyle:
     def __del__(self):
         pass
 
-    def Food(self, category):
+    def Food(self, category, times=1):
         if category == 'Meal':
             rand_num1 = os.urandom(1)[0] % (os.urandom(1)[0]) % 11
             rand_num2 = os.urandom(1)[0] % (os.urandom(1)[0]) % 11
@@ -121,8 +131,6 @@ class Lifestyle:
             tmp_list1 = [dicts for dicts in mixed_case_mapping(rand_num1)]
             tmp_list2 = [dicts for dicts in mixed_case_mapping(rand_num2)]
 
-            #print(tmp_list1); print(''.join(tmp_list1)); print((''.join(tmp_list1), rand_num1))
-            #print(tmp_list2); print(''.join(tmp_list2)); print((''.join(tmp_list2), rand_num2))
             print("| Name | Type | Taste | Quality |")
             print((''.join(tmp_list1), ''.join(tmp_list2), rand_num1, rand_num2))
             return (''.join(tmp_list1), ''.join(tmp_list2), rand_num1, rand_num2)
@@ -134,7 +142,7 @@ class Lifestyle:
             pass
 
         elif category == 'VM':
-            tmp = [os.urandom(10) for _ in range(10)]
+            tmp = [os.urandom(10) for _ in range(times)]
             print("| Company | Region | Sum | Qs |")
             for byte_data in tmp:
                 transformed_data = transform_bytes_to_structured_data(byte_data)
@@ -171,4 +179,4 @@ class Hobby:
     pass
 
 t = Lifestyle()
-t.Food('VM')
+t.Food('VM', 55)
