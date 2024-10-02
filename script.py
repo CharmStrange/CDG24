@@ -88,11 +88,27 @@ def mixed_case_mapping(times=5):
         mapping[alphabet[rand_num]] = rand_num
     return mapping
 
+def transform_bytes_to_structured_data(byte_data):
+    # 1. Type: 첫 번째 바이트를 65~90 사이 값(A~Z)로 변환
+    type_char = chr(65 + (byte_data[0] % 26))
+    
+    # 2. Region: 2~3번째 바이트를 합쳐서 지역 번호로 사용 (0~65535 범위)
+    region = byte_data[1] * 256 + byte_data[2]
+    
+    # 3. Sum: 나머지 바이트들의 합을 구해서 정수 값으로 표현
+    byte_sum = sum(byte_data[3:])
+    
+    # 4. Qs: 특정 바이트 값이 특정 조건을 만족하면 (예: 128 이상) 'High'로 분류, 그렇지 않으면 'Low'
+    qs_value = "High" if byte_data[3] > 128 else "Low"
+    
+    return f"| {type_char} | {region} | {byte_sum} | {qs_value} |"
+
+
 class Lifestyle:
     def __init__(self):
         self.ret = []
         print("Type category parameter, default is 'Meal'.")
-        print("Category list : ['Meal', 'Snack', 'Dessert']")
+        print("Category list : ['Meal', 'Snack', 'Dessert', 'VM']")
 
     def __del__(self):
         pass
@@ -111,9 +127,20 @@ class Lifestyle:
             print((''.join(tmp_list1), ''.join(tmp_list2), rand_num1, rand_num2))
             return (''.join(tmp_list1), ''.join(tmp_list2), rand_num1, rand_num2)
         
-        elif self.category == 'Snack':
+        elif category == 'Snack':
             pass
-        elif self.category == 'Dessert':
+
+        elif category == 'Dessert':
+            pass
+
+        elif category == 'VM':
+            tmp = [os.urandom(10) for _ in range(10)]
+            print("| Company | Region | Sum | Qs |")
+            for byte_data in tmp:
+                transformed_data = transform_bytes_to_structured_data(byte_data)
+                print(transformed_data)
+            
+        else:
             pass
 
 class Education:
@@ -144,4 +171,4 @@ class Hobby:
     pass
 
 t = Lifestyle()
-t.Food('Meal')
+t.Food('VM')
